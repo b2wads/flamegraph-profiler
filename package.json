@@ -1,0 +1,34 @@
+{
+  "name": "flamegraph-profiler",
+  "version": "1.0.0",
+  "description": "Extract information from the V8 profiler and export it in folded FlameGraph format",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rockerbacon/flamegraph-profiler.git"
+  },
+  "keywords": [
+    "performance",
+    "profiler",
+    "v8",
+    "flamegraph"
+  ],
+  "author": "Vitor Santos",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/rockerbacon/flamegraph-profiler/issues"
+  },
+  "homepage": "https://github.com/rockerbacon/flamegraph-profiler#readme",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "nan": "^2.14.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "sinon": "^8.0.1"
+  }
+}
