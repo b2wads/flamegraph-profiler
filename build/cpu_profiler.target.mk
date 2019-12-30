@@ -93,7 +93,8 @@ INCS_Release := \
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/cpu_profiler.o \
-	$(obj).target/$(TARGET)/src/profile_converter.o
+	$(obj).target/$(TARGET)/src/profile_converter.o \
+	$(obj).target/$(TARGET)/src/fold_profile.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)
