@@ -29,7 +29,7 @@ void collapse_in_flamegraph_recursively(stringstream& output, const v8::CpuProfi
 }
 
 profile_converter::profile_converter(v8::CpuProfile* profile, Nan::Callback* callback) :
-	Nan::AsyncWorker(callback),
+	Nan::AsyncWorker(callback, "flamegraph_profiler::profile_converter"),
 	profile(profile)
 {}
 
