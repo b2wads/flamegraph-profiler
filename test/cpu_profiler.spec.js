@@ -1,8 +1,6 @@
 const { expect } = require('chai')
 const { cpuProfiler } = require('../')
 
-console.log(cpuProfiler)
-
 const busyWait = (timeInMs) => {
     begin = new Date().getTime()
     do {
