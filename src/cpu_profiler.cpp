@@ -22,30 +22,16 @@ void flamegraph_profiler::setSamplingInterval(const Nan::FunctionCallbackInfo<Va
 }
 
 void flamegraph_profiler::start(const Nan::FunctionCallbackInfo<Value>& function) {
-	auto title = Nan::To<String>(function[0]).ToLocalChecked();
+	auto title = function[0].As<String>();
 	v8_profiler->StartProfiling(title);
 }
 
 void flamegraph_profiler::stop(const Nan::FunctionCallbackInfo<Value>& function) {
-	auto isolate = function.GetIsolate();
-	auto title = Nan::To<String>(function[0]).ToLocalChecked();
-	auto callbackFunction = Nan::To<Function>(function[1]);
+	auto title = function[0].As<String>();
+	auto callback = function[1].As<Function>();
 
-	async([=] () mutable {
-		// TODO this instantiation segfaults
-		Nan::Callback callback(callbackFunction.ToLocalChecked());
-	
-    	auto profile = v8_profiler->StopProfiling(title);
-		auto foldedProfile = collapse_in_flamegraph(profile);
-		profile->Delete();
-
-		Local<String> externalFoldedProfile = String::NewFromUtf8(
-			isolate,
-			foldedProfile.c_str(),
-			NewStringType::kNormal
-		).ToLocalChecked();
-
-		Local<Value> callbackArgs[] = { externalFoldedProfile };
-		Call(callback, 1, callbackArgs);
-	});
+	Nan::AsyncQueueWorker(new profile_converter(
+		v8_profiler->StopProfiling(title),
+		new Nan::Callback(callback)
+	));
 }
