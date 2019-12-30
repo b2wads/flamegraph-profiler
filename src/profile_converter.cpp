@@ -1,6 +1,8 @@
 #include <sstream>
 #include "profile_converter.h"
 
+#include <iostream> // debug
+
 using namespace std;
 using namespace flamegraph_profiler;
 using namespace v8;
@@ -35,7 +37,8 @@ void profile_converter::Execute() {
 	collapse_in_flamegraph_recursively(folded_profile, profile->GetTopDownRoot(), "");
 }
 
-void profile_converter::HandleOkCallback() {
+void profile_converter::HandleOKCallback() {
+	Nan::HandleScope scope;
 	profile->Delete();
 	v8::Local<v8::Value> callback_args[] = {
 		Nan::Null(),
@@ -45,6 +48,7 @@ void profile_converter::HandleOkCallback() {
 }
 
 void profile_converter::HandleErrorCallback() {
+	Nan::HandleScope scope;
 	profile->Delete();
 	v8::Local<v8::Value> callback_args[] = {
 		Nan::New(ErrorMessage()).ToLocalChecked(),

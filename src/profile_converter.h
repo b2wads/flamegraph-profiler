@@ -15,7 +15,7 @@ namespace flamegraph_profiler {
 			profile_converter(v8::CpuProfile* profile, Nan::Callback* callback);
 
 			void Execute();
-			void HandleOkCallback();
+			void HandleOKCallback();
 			void HandleErrorCallback();
 	};
 }
