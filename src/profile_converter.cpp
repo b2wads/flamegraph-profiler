@@ -9,14 +9,18 @@ using namespace flamegraph_profiler;
 using namespace v8;
 using namespace Nan;
 
-profile_converter::profile_converter(v8::CpuProfile* profile, Nan::Callback* callback) :
+profile_converter::profile_converter(v8::CpuProfile* profile, Nan::Callback* callback, const string& root_script) :
 	Nan::AsyncWorker(callback, "flamegraph_profiler::profile_converter"),
-	profile(profile)
+	profile(profile),
+	root_script(root_script)
 {}
 
 void profile_converter::Execute() {
 	auto sample = profile->GetTopDownRoot();
-	collapse_recursively(folded_profile, sample, "");
+	auto branches_to_collapse = cut_branches_at_root(sample, root_script);
+	for (auto branch : branches_to_collapse) {
+		collapse_recursively(folded_profile, branch, "");
+	}
 }
 
 void profile_converter::HandleOKCallback() {

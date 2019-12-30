@@ -60,6 +60,7 @@ describe('when using the CPU Profiler', () => {
 
   describe('when extracting data from the profiler', () => {
     let data
+    const rootScript = 'cpu_profiler.spec.js'
     before(() => {
       cpuProfiler.start('test3')
       for (let i = 0; i < 100000000; i++) {
@@ -67,14 +68,28 @@ describe('when using the CPU Profiler', () => {
       }
       cpuProfiler.stop('test3', (err, profilerData) => {
         data = profilerData
-      })
+      }, rootScript)
       busyWait(1)
     })
 
     it('should send string containing collected metricts to callback method in less than 1ms', () => {
       expect(typeof data).to.be.equal('string')
       expect(data).to.not.be.empty
-      expect(data).to.have.string('cpu_profiler.spec.js')
+    })
+
+    it('should not have a single stack trace which does not contain the root script', () => {
+      const stackTraces = data.split('\n')
+      stackTraces.forEach(stackTrace => {
+        expect(stackTrace).to.have.string(rootScript)
+      })
+    })
+
+    it('should not have a single stack trace which does not begin at the root script', () => {
+      const stackTraces = data.split('\n')
+      stackTraces.forEach(stackTrace => {
+        const stackTraceBegin = stackTrace.substring(0, rootScript.length)
+        expect(stackTraceBegin).to.be.equal(rootScript)
+      })
     })
   })
 })
