@@ -6,13 +6,14 @@
 using namespace v8;
 using namespace std;
 
-void flamegraph_profiler::collapse_recursively (stringstream& output, const CpuProfileNode* node, string function_trace) {
-	string file_path(node->GetScriptResourceNameStr());
+void flamegraph_profiler::collapse_recursively (stringstream& output, const CpuProfileNode* node, string function_trace, unsigned chars_to_trim) {
+	auto cstyle_file_path = node->GetScriptResourceNameStr();
+	string file_path(cstyle_file_path);
 
-	if (!file_path.empty()) {
+	if (file_path.length() > chars_to_trim) {
 		function_trace += file_path;
 		output 
-			<< function_trace
+			<< cstyle_file_path+chars_to_trim
 			<< " (ln " << node->GetLineNumber() << ") "
 			<< node->GetHitCount()
 			<< '\n'
@@ -22,15 +23,14 @@ void flamegraph_profiler::collapse_recursively (stringstream& output, const CpuP
 
 	auto children_count = node->GetChildrenCount();
 	for (decltype(children_count) i = 0; i < children_count; i++) {
-		collapse_recursively(output, node->GetChild(i), function_trace);
+		collapse_recursively(output, node->GetChild(i), function_trace, chars_to_trim);
 	}
 }
 
 bool is_script(const CpuProfileNode* node, const string& script) {
 	string file_path(node->GetScriptResourceNameStr());
-	cerr << "node: " << file_path << endl;
 	if (file_path.length() >= script.length()) {
-		return true;
+		return file_path.compare(file_path.length()-script.length(), script.length(), script) == 0;
 	}
 	return false;
 }
