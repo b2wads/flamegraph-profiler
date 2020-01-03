@@ -65,36 +65,73 @@ describe('when using the native CPU Profiler', () => {
   })
 
   describe('when extracting data from the profiler', () => {
-    let data
-    const rootScript = 'test/native-cpu-profiler.spec.js'
-    const projectRoot = path.normalize(`${__dirname}/..`)
-    before(() => {
-      cpuProfiler.start('test3')
-      for (let i = 0; i < 100000000; i++) {
-        (() => {})()
-      }
-      cpuProfiler.stop(
-        'test3',
-        rootScript,
-        projectRoot.length+1,
-        (err, profilerData) => {
-          data = profilerData
+    context('with synchronous callback', () => {
+      let data
+      const rootScript = 'test/native-cpu-profiler.spec.js'
+      const projectRoot = path.normalize(`${__dirname}/..`)
+      before(() => {
+        cpuProfiler.start('test3')
+        for (let i = 0; i < 100000000; i++) {
+          (() => {})()
         }
-      )
-      busyWait(1)
+        cpuProfiler.stop(
+          'test3',
+          rootScript,
+          projectRoot.length+1,
+          (err, profilerData) => {
+            data = profilerData
+          }
+        )
+        busyWait(1)
+      })
+
+      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+        expect(typeof data).to.be.equal('string')
+        expect(data).to.not.be.empty
+        expect(data.charAt(data.length-1)).to.be.equal('\n')
+      })
+
+      it('should not have a single stack trace which does not begin at the root script', () => {
+        const stackTraces = data.split('\n').slice(0, -1)
+        stackTraces.forEach(stackTrace => {
+          const stackTraceBegin = stackTrace.substring(0, rootScript.length)
+          expect(stackTraceBegin).to.be.equal(rootScript)
+        })
+      })
     })
 
-    it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
-      expect(typeof data).to.be.equal('string')
-      expect(data).to.not.be.empty
-      expect(data.charAt(data.length-1)).to.be.equal('\n')
-    })
+    context('with asynchronous callback', () => {
+      let data
+      const rootScript = 'test/native-cpu-profiler.spec.js'
+      const projectRoot = path.normalize(`${__dirname}/..`)
+      before(() => {
+        cpuProfiler.start('test3')
+        for (let i = 0; i < 100000000; i++) {
+          (() => {})()
+        }
+        cpuProfiler.stop(
+          'test3',
+          rootScript,
+          projectRoot.length+1,
+          async (err, profilerData) => {
+            data = profilerData
+          }
+        )
+        busyWait(1)
+      })
 
-    it('should not have a single stack trace which does not begin at the root script', () => {
-      const stackTraces = data.split('\n').slice(0, -1)
-      stackTraces.forEach(stackTrace => {
-        const stackTraceBegin = stackTrace.substring(0, rootScript.length)
-        expect(stackTraceBegin).to.be.equal(rootScript)
+      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+        expect(typeof data).to.be.equal('string')
+        expect(data).to.not.be.empty
+        expect(data.charAt(data.length-1)).to.be.equal('\n')
+      })
+
+      it('should not have a single stack trace which does not begin at the root script', () => {
+        const stackTraces = data.split('\n').slice(0, -1)
+        stackTraces.forEach(stackTrace => {
+          const stackTraceBegin = stackTrace.substring(0, rootScript.length)
+          expect(stackTraceBegin).to.be.equal(rootScript)
+        })
       })
     })
   })
