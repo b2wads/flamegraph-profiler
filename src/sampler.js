@@ -1,3 +1,10 @@
+const path = require('path')
+
+const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
+
+const projectRootPrefixSize = path.normalize(`${__dirname}/../..`).length+1
+
+
 class Sampler {
   constructor({
     description,
@@ -19,7 +26,7 @@ class Sampler {
   start() {
     this.callCounter++
     if (this.callCounter === this.samplingInterval) {
-      nativeCpuProfiler.start()
+      nativeCpuProfiler.start(this.description)
     }
   }
 

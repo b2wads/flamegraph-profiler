@@ -1,13 +1,10 @@
-const path = require('path')
 const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
 
 const Sampler = require('./sampler')
 
-const projectRootPrefixSize = path.normalize(`${__dirname}/../..`).length
-
 
 const initialConfig = {
-  targetedScript: '',
+  targetScript: '',
   samplingInterval: 1,
   callback: () => {}
 }
