@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const sinon = require('sinon')
 
 const profiler = require('..')
+const Sampler = require('../src/sampler')
 
 
 describe('when using the function wrapper', () => {
@@ -48,15 +49,15 @@ describe('when using the function wrapper', () => {
     context('with synchronous function', () => {
       let wrappedFunction
       before(() => {
-        sinon.stub(profiler.Sampler.prototype, 'start')
-        sinon.stub(profiler.Sampler.prototype, 'stop')
+        sinon.stub(Sampler.prototype, 'start')
+        sinon.stub(Sampler.prototype, 'stop')
         wrappedFunction = profiler.wrap(functionFixture)
         wrappedFunction()
       })
 
       after(() => {
-        profiler.Sampler.prototype.start.restore()
-        profiler.Sampler.prototype.stop.restore()
+        Sampler.prototype.start.restore()
+        Sampler.prototype.stop.restore()
       })
 
       it('should return a new function', () => {
@@ -68,21 +69,26 @@ describe('when using the function wrapper', () => {
       })
 
       it('should start the profiler sampler', () => {
-        expect(profiler.Sampler.prototype.start.called).to.be.true
+        expect(Sampler.prototype.start.called).to.be.true
       })
 
       it('should stop the profiler sampler', () => {
-        expect(profiler.Sampler.prototype.stop.called).to.be.true
+        expect(Sampler.prototype.stop.called).to.be.true
       })
     })
 
     context('with asynchronous function', () => {
       let wrappedFunction
       before(async () => {
-        sinon.stub(profiler.Sampler.prototype, 'start')
-        sinon.stub(profiler.Sampler.prototype, 'stop')
+        sinon.stub(Sampler.prototype, 'start')
+        sinon.stub(Sampler.prototype, 'stop')
         wrappedFunction = profiler.wrap(asyncFunctionFixture)
         await wrappedFunction()
+      })
+
+      after(() => {
+        Sampler.prototype.start.restore()
+        Sampler.prototype.stop.restore()
       })
 
       it('should return a new function', () => {
@@ -94,11 +100,11 @@ describe('when using the function wrapper', () => {
       })
 
       it('should start the profiler sampler', () => {
-        expect(profiler.Sampler.prototype.start.called).to.be.true
+        expect(Sampler.prototype.start.called).to.be.true
       })
 
       it('should stop the profiler sampler', () => {
-        expect(profiler.Sampler.prototype.stop.called).to.be.true
+        expect(Sampler.prototype.stop.called).to.be.true
       })
     })
   })

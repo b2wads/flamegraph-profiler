@@ -1,6 +1,8 @@
 const path = require('path')
 const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
 
+const Sampler = require('./sampler')
+
 const projectRootPrefixSize = path.normalize(`${__dirname}/../..`).length
 
 
@@ -10,45 +12,6 @@ const initialConfig = {
   callback: () => {}
 }
 let defaultConfig = initialConfig
-
-class Sampler {
-  constructor({
-    description,
-    targetScript,
-    samplingInterval,
-    callback
-  }) {
-    if (description) {
-      this.description = description
-    } else {
-      this.description = callback.name
-    }
-    this.targetScript = targetScript
-    this.samplingInterval = samplingInterval
-    this.callback = callback
-    this.callCounter = 0
-  }
-
-  start() {
-    this.callCounter++
-    if (this.callCounter === this.samplingInterval) {
-      nativeCpuProfiler.start()
-    }
-  }
-
-  stop() {
-    if (this.callCounter === this.samplingInterval) {
-      nativeCpuProfiler.stop(
-        this.description,
-        this.targetedScript,
-        projectRootPrefixSize,
-        this.callback
-      )
-
-      this.callCounter = 0
-    }
-  }
-}
 
 const wrapAsync = (asyncFunc, config) => {
   const finalConfig = {
@@ -110,7 +73,6 @@ const getDefaultConfig = () => {
 }
 
 module.exports = {
-  Sampler,
   changeDefaultConfig,
   resetDefaultConfig,
   wrapAsync,
