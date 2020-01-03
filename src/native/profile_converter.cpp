@@ -2,8 +2,6 @@
 #include "profile_converter.h"
 #include "fold_profile.h"
 
-#include <iostream> // debug
-
 using namespace std;
 using namespace flamegraph_profiler;
 using namespace v8;

@@ -1,7 +1,6 @@
 #include "fold_profile.h"
 
 #include <queue>
-#include <iostream>
 
 using namespace v8;
 using namespace std;

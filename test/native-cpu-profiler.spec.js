@@ -1,5 +1,5 @@
 const { expect } = require('chai')
-const { cpuProfiler } = require('../')
+const cpuProfiler = require('bindings')('native_cpu_profiler')
 const path = require('path')
 
 const busyWait = (timeInMs) => {
@@ -9,7 +9,7 @@ const busyWait = (timeInMs) => {
     } while (elapsedTime < timeInMs)
 }
 
-describe('when using the CPU Profiler', () => {
+describe('when using the native CPU Profiler', () => {
   describe('when starting the profiler', () => {
     let startError = false
     before(() => {
@@ -66,7 +66,7 @@ describe('when using the CPU Profiler', () => {
 
   describe('when extracting data from the profiler', () => {
     let data
-    const rootScript = 'test/cpu_profiler.spec.js'
+    const rootScript = 'test/native-cpu-profiler.spec.js'
     const projectRoot = path.normalize(`${__dirname}/..`)
     before(() => {
       cpuProfiler.start('test3')
@@ -88,13 +88,6 @@ describe('when using the CPU Profiler', () => {
       expect(typeof data).to.be.equal('string')
       expect(data).to.not.be.empty
       expect(data.charAt(data.length-1)).to.be.equal('\n')
-    })
-
-    it('should not have a single stack trace which does not contain the root script', () => {
-      const stackTraces = data.split('\n').slice(0, -1)
-      stackTraces.forEach(stackTrace => {
-        expect(stackTrace).to.have.string(rootScript)
-      })
     })
 
     it('should not have a single stack trace which does not begin at the root script', () => {
