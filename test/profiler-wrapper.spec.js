@@ -82,7 +82,7 @@ describe('when using the function wrapper', () => {
       before(async () => {
         sinon.stub(Sampler.prototype, 'start')
         sinon.stub(Sampler.prototype, 'stop')
-        wrappedFunction = profiler.wrap(asyncFunctionFixture)
+        wrappedFunction = profiler.wrapAsync(asyncFunctionFixture)
         await wrappedFunction()
       })
 
