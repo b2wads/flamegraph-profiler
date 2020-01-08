@@ -26,13 +26,17 @@ class ProfilerWrapper {
     const sampler = new Sampler(this.config)
     return async (...args) => {
       sampler.start()
-      try {
-        await asyncFunc(...args)
-      } catch (err) {
-        throw err
-      } finally {
-        sampler.stop()
-      }
+
+      return asyncFunc(...args)
+        .then(result => {
+          return result
+        })
+        .catch(err => {
+          throw err
+        })
+        .finally(() => {
+          sampler.stop()
+        })
     }
   }
   
@@ -43,7 +47,7 @@ class ProfilerWrapper {
     return (...args) => {
       sampler.start()
       try {
-        func(...args)
+        return func(...args)
       } catch (err) {
         throw err
       } finally {

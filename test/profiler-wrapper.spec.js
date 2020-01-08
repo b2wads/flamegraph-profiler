@@ -6,9 +6,11 @@ const Sampler = require('../src/sampler')
 
 
 describe('when using the function wrapper', () => {
-  const functionFixture = sinon.stub()
-  const asyncFunctionFixture = async () => {
-    functionFixture()
+  const functionFixture = sinon.stub().callsFake((a, b) => {
+    return a+b
+  })
+  const asyncFunctionFixture = async (a, b) => {
+    return functionFixture(a, b)
   }
 
   context('with profiler disabled', () => {
@@ -48,12 +50,16 @@ describe('when using the function wrapper', () => {
       profiler = new ProfilerWrapper()
     })
     context('with synchronous function', () => {
+      const argA = 2
+      const argB = 3
+
       let wrappedFunction
+      let wrappedFunctionReturn
       before(() => {
         sinon.stub(Sampler.prototype, 'start')
         sinon.stub(Sampler.prototype, 'stop')
         wrappedFunction = profiler.wrap(functionFixture)
-        wrappedFunction()
+        wrappedFunctionReturn = wrappedFunction(argA, argB)
       })
 
       after(() => {
@@ -65,8 +71,12 @@ describe('when using the function wrapper', () => {
         expect(wrappedFunction).to.not.be.equal(functionFixture)
       })
 
-      it('calling the wrap function should call the wrapped function', () => {
+      it('calling the wraping function should call the wrapped function', () => {
         expect(functionFixture.called).to.be.true
+      })
+
+      it('return of the wrapping function should be the same as the return of the wrapped function', () => {
+        expect(wrappedFunctionReturn).to.be.equal(functionFixture(argA, argB))
       })
 
       it('should start the profiler sampler', () => {
@@ -79,12 +89,16 @@ describe('when using the function wrapper', () => {
     })
 
     context('with asynchronous function', () => {
+      const argA = 2
+      const argB = 3
+
       let wrappedFunction
+      let wrappedFunctionReturn
       before(async () => {
         sinon.stub(Sampler.prototype, 'start')
         sinon.stub(Sampler.prototype, 'stop')
         wrappedFunction = profiler.wrapAsync(asyncFunctionFixture)
-        await wrappedFunction()
+        wrappedFunctionReturn = await wrappedFunction(argA, argB)
       })
 
       after(() => {
@@ -98,6 +112,10 @@ describe('when using the function wrapper', () => {
 
       it('calling the wrap function should call the wrapped function', () => {
         expect(functionFixture.called).to.be.true
+      })
+
+      it('return of the wrapping function should be the same as the return of the wrapped function', () => {
+        expect(wrappedFunctionReturn).to.be.equal(functionFixture(argA, argB))
       })
 
       it('should start the profiler sampler', () => {
