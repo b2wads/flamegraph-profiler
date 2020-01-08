@@ -3,12 +3,13 @@ const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
 const Sampler = require('./sampler')
 
 
-const initialConfig = {
-  targetScript: '',
+const defaultGlobalConfig = {
+  description: 'profile-sample',
+  targetScript: 'app.js',
   samplingInterval: 1,
   callback: () => {}
 }
-let globalConfig = initialConfig
+let globalConfig = defaultGlobalConfig
 
 class ProfilerWrapper {
 
