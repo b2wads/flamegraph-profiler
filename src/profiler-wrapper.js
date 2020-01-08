@@ -8,11 +8,11 @@ const initialConfig = {
   samplingInterval: 1,
   callback: () => {}
 }
-let defaultConfig = initialConfig
+let globalConfig = initialConfig
 
 const wrapAsync = (asyncFunc, config) => {
   const finalConfig = {
-    ...defaultConfig,
+    ...globalConfig,
     ...config
   }
 
@@ -33,7 +33,7 @@ const wrapAsync = (asyncFunc, config) => {
 
 const wrap = (func, config) => {
   const finalConfig = {
-    ...defaultConfig,
+    ...globalConfig,
     ...config
   }
 
@@ -52,26 +52,22 @@ const wrap = (func, config) => {
   }
 }
 
-const changeDefaultConfig = config => {
-  defaultConfig = { 
-    ...defaultConfig,
+const changeGlobalConfig = config => {
+  globalConfig = { 
+    ...globalConfig,
     ...config
   }
   if (config.tickInterval)
     nativeCpuProfiler.setSamplingInterval(config.tickInterval)
 }
 
-const resetDefaultConfig = () => {
-  defaultConfig = initialConfig
-}
-
-const getDefaultConfig = () => {
-  return { ...defaultConfig }
+const resetGlobalConfig = () => {
+  globalConfig = initialConfig
 }
 
 module.exports = {
-  changeDefaultConfig,
-  resetDefaultConfig,
+  changeGlobalConfig,
+  resetGlobalConfig,
   wrapAsync,
   wrap
 }

@@ -13,13 +13,13 @@ describe('when using the function wrapper', () => {
 
   context('with profiler disabled', () => {
     before(() => {
-      profiler.changeDefaultConfig({
+      profiler.changeGlobalConfig({
         disabled: true
       })
     })
 
     after(() => {
-      profiler.resetDefaultConfig()
+      profiler.resetGlobalConfig()
     })
 
     context('with synchronous function', () => {
