@@ -10,46 +10,47 @@ const initialConfig = {
 }
 let globalConfig = initialConfig
 
-const wrapAsync = (asyncFunc, config) => {
-  const finalConfig = {
-    ...globalConfig,
-    ...config
-  }
+class ProfilerWrapper {
 
-  if (finalConfig.disabled) return asyncFunc
-
-  sampler = new Sampler(finalConfig)
-  return async (...args) => {
-    sampler.start()
-    try {
-      await asyncFunc(...args)
-    } catch (err) {
-      throw err
-    } finally {
-      sampler.stop()
+  constructor(config) {
+    this.config = {
+      ...globalConfig,
+      ...config
     }
   }
-}
 
-const wrap = (func, config) => {
-  const finalConfig = {
-    ...globalConfig,
-    ...config
-  }
-
-  if (finalConfig.disabled) return func
-
-  sampler = new Sampler(finalConfig)
-  return (...args) => {
-    sampler.start()
-    try {
-      func(...args)
-    } catch (err) {
-      throw err
-    } finally {
-      sampler.stop()
+  wrapAsync (asyncFunc) {
+    if (this.config.disabled) return asyncFunc
+  
+    const sampler = new Sampler(this.config)
+    return async (...args) => {
+      sampler.start()
+      try {
+        await asyncFunc(...args)
+      } catch (err) {
+        throw err
+      } finally {
+        sampler.stop()
+      }
     }
   }
+  
+  wrap (func) {
+    if (this.config.disabled) return func
+  
+    const sampler = new Sampler(this.config)
+    return (...args) => {
+      sampler.start()
+      try {
+        func(...args)
+      } catch (err) {
+        throw err
+      } finally {
+        sampler.stop()
+      }
+    }
+  }
+  
 }
 
 const changeGlobalConfig = config => {
@@ -68,6 +69,5 @@ const resetGlobalConfig = () => {
 module.exports = {
   changeGlobalConfig,
   resetGlobalConfig,
-  wrapAsync,
-  wrap
+  ProfilerWrapper
 }

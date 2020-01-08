@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 
-const profiler = require('..')
+const { ProfilerWrapper } = require('..')
 const Sampler = require('../src/sampler')
 
 
@@ -12,14 +12,11 @@ describe('when using the function wrapper', () => {
   }
 
   context('with profiler disabled', () => {
+    let profiler
     before(() => {
-      profiler.changeGlobalConfig({
+      profiler = new ProfilerWrapper({
         disabled: true
       })
-    })
-
-    after(() => {
-      profiler.resetGlobalConfig()
     })
 
     context('with synchronous function', () => {
@@ -46,6 +43,10 @@ describe('when using the function wrapper', () => {
   })
 
   context('with profiler enabled', () => {
+    let profiler
+    before(() => {
+      profiler = new ProfilerWrapper()
+    })
     context('with synchronous function', () => {
       let wrappedFunction
       before(() => {
