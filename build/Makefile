@@ -303,8 +303,8 @@ $(obj).$(TOOLSET)/%.o: $(obj)/%.s FORCE_DO_CMD
 
 ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
     $(findstring $(join ^,$(prefix)),\
-                 $(join ^,cpu_profiler.target.mk)))),)
-  include cpu_profiler.target.mk
+                 $(join ^,native_cpu_profiler.target.mk)))),)
+  include native_cpu_profiler.target.mk
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@

@@ -1,40 +1,25 @@
 #include <sstream>
 #include "profile_converter.h"
-
-#include <iostream> // debug
+#include "fold_profile.h"
 
 using namespace std;
 using namespace flamegraph_profiler;
 using namespace v8;
 using namespace Nan;
 
-void collapse_in_flamegraph_recursively(stringstream& output, const v8::CpuProfileNode* node, string functionTrace) {
-	string filePath(node->GetScriptResourceNameStr());
-
-	if (!filePath.empty()) {
-		functionTrace += ';';
-		functionTrace += filePath;
-		output 
-			<< functionTrace
-			<< " (ln " << node->GetLineNumber() << ") "
-			<< node->GetHitCount()
-			<< '\n'
-		;
-	}
-
-	auto childrenCount = node->GetChildrenCount();
-	for (decltype(childrenCount) i = 0; i < childrenCount; i++) {
-		collapse_in_flamegraph_recursively(output, node->GetChild(i), functionTrace);
-	}
-}
-
-profile_converter::profile_converter(v8::CpuProfile* profile, Nan::Callback* callback) :
+profile_converter::profile_converter(v8::CpuProfile* profile, Nan::Callback* callback, const string& root_script, unsigned chars_to_trim) :
 	Nan::AsyncWorker(callback, "flamegraph_profiler::profile_converter"),
-	profile(profile)
+	profile(profile),
+	root_script(root_script),
+	chars_to_trim(chars_to_trim)
 {}
 
 void profile_converter::Execute() {
-	collapse_in_flamegraph_recursively(folded_profile, profile->GetTopDownRoot(), "");
+	auto sample = profile->GetTopDownRoot();
+	auto branches_to_collapse = cut_branches_at_root(sample, root_script);
+	for (auto branch : branches_to_collapse) {
+		collapse_recursively(folded_profile, branch, "", chars_to_trim);
+	}
 }
 
 void profile_converter::HandleOKCallback() {

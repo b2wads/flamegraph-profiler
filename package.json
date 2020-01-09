@@ -4,7 +4,14 @@
   "description": "Extract information from the V8 profiler and export it in folded FlameGraph format",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "eslint": "./node_modules/.bin/eslint --fix .",
+    "eslint:check": "./node_modules/.bin/eslint .",
+    "fmt": "npm run prettier && npm run eslint",
+    "fmt:check": "npm run prettier:check && npm run eslint:check",
+    "prettier": "./node_modules/.bin/prettier --write \"**/{*.js,*.json,bin/**}\"",
+    "prettier:check": "./node_modules/.bin/prettier --check \"**/{*.js,*.json,bin/**}\"",
+    "test:coverage-report": "nyc report --reporter=text-lcov > coverage.lcov"
   },
   "repository": {
     "type": "git",
@@ -17,7 +24,7 @@
     "flamegraph"
   ],
   "author": "Vitor Santos",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rockerbacon/flamegraph-profiler/issues"
   },
@@ -28,6 +35,20 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.2.2"
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-chai-friendly": "^0.5.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-no-unsafe-regex": "^1.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.8.0",
+    "mocha": "^6.2.2",
+    "nyc": "^15.0.0",
+    "prettier": "^1.19.1",
+    "sinon": "^8.0.2"
   }
 }

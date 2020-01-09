@@ -3,4 +3,4 @@
 export builddir_name ?= ./build/.
 .PHONY: all
 all:
-	$(MAKE) cpu_profiler
+	$(MAKE) native_cpu_profiler

@@ -29,9 +29,14 @@ void flamegraph_profiler::start(const Nan::FunctionCallbackInfo<Value>& function
 void flamegraph_profiler::stop(const Nan::FunctionCallbackInfo<Value>& function) {
 	Nan::HandleScope scope;
 	auto title = function[0].As<String>();
-	auto callback = function[1].As<Function>();
+	string root_script(*Nan::Utf8String(function[1]));
+	unsigned chars_to_trim = Nan::To<unsigned>(function[2]).ToChecked();
+	auto callback = function[3].As<Function>();
+
 	Nan::AsyncQueueWorker(new profile_converter(
 		v8_profiler->StopProfiling(title),
-		new Nan::Callback(callback)
+		new Nan::Callback(callback),
+		root_script,
+		chars_to_trim
 	));
 }
