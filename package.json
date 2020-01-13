@@ -4,13 +4,14 @@
   "description": "Extract information from the V8 profiler and export it in folded FlameGraph format",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "eslint": "./node_modules/.bin/eslint --fix .",
-    "eslint:check": "./node_modules/.bin/eslint .",
+    "test": "nyc mocha --reporter spec",
+    "test:coverage-report": "nyc report --reporter=text-lcov > coverage.lcov",
+    "eslint": "eslint --fix .",
+    "eslint:check": "eslint .",
     "fmt": "npm run prettier && npm run eslint",
     "fmt:check": "npm run prettier:check && npm run eslint:check",
-    "prettier": "./node_modules/.bin/prettier --write \"**/{*.js,*.json,bin/**}\"",
-    "prettier:check": "./node_modules/.bin/prettier --check \"**/{*.js,*.json,bin/**}\"",
+    "prettier": "prettier --write \"**/{*.js,*.json,bin/**}\"",
+    "prettier:check": "prettier --check \"**/{*.js,*.json,bin/**}\"",
     "test:coverage-report": "nyc report --reporter=text-lcov > coverage.lcov"
   },
   "repository": {
