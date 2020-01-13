@@ -10,16 +10,9 @@ commands:
       - run: "npm t && npm run test:coverage-report"
 
 jobs:
-  node10x: &template
+  node6x: &template
     docker:
-      - image: circleci/node:10-jessie
-        #auth:
-          #username: $B2WADS_DOCKER_REGISTRY_USERNAME
-          #password: $B2WADS_DOCKER_REGISTRY_PASSWORD
-      #- image: mongo:3.6
-      #- image: elasticsearch:5
-      #- image: rabbitmq:3.6-alpine
-      #- image: redis:5
+      - image: circleci/node:6
     steps:
       - checkout
       - run:
@@ -32,14 +25,22 @@ jobs:
       - run:
           when: on_success
           command: bash <(curl -s https://codecov.io/bash)
-  node11x:
+
+  node8x:
       <<: *template
       docker:
-        - image: circleci/node:11
-        #- image: mongo:3.6
-        #- image: elasticsearch:5
-        #- image: rabbitmq:3.6-alpine
-        #- image: redis:5
+        - image: circleci/node:8
+
+  node10x:
+      <<: *template
+      docker:
+        - image: circleci/node:10
+
+  node12x:
+      <<: *template
+      docker:
+        - image: circleci/node:12
+
 
   build:
     description: Faz login no registry, monta uma imagem docker e faz push para o registry
@@ -111,72 +112,18 @@ jobs:
             -H "Authorization: token << parameters.github-api-token >>" POST -o /dev/null -s -w "%{http_code}\n" $GITHUB_API_URL)
             if [ "${response: -3}" -ne "201" ]; then echo "Erro ao notificar build" && exit 1; fi
 
-# O `context:` abaixo deve ser usado se você precisa
-# de uma imagem privada. Nesse context devem estar cadastradas as envs:
-# - B2WADS_DOCKER_REGISTRY_USERNAME
-# - B2WADS_DOCKER_REGISTRY_PASSWORD
 workflows:
   version: 2
   required-checks:
     jobs:
+      - node6x:
+          context: docker-registry-auth
       - node10x:
           context: docker-registry-auth
-      
-      # Remova os comentário abaixo se quiser realizar build 
-      # de uma imagem staging do repositório
-
-      # - build: &build-template
-      #     context: docker-registry-auth
-      #     name: build-staging
-      #     registry: $B2WADS_DOCKER_REGISTRY
-      #     registry-username: B2WADS_DOCKER_REGISTRY_USERNAME
-      #     registry-password: B2WADS_DOCKER_REGISTRY_PASSWORD
-      #     image-tag: staging-$(echo "$CIRCLE_BRANCH" | sed 's/\W/-/g')
-      #     requires:
-      #       - node10x
-      #     filters:
-      #       branches:
-      #         ignore: master
-      # - notify-build-status: &notify-build-status-template
-      #     context: docker-registry-auth
-      #     name: notify-build-staging
-      #     registry: $B2WADS_DOCKER_REGISTRY
-      #     image-tag: staging-$(echo "$CIRCLE_BRANCH" | sed 's/\W/-/g')
-      #     github-api-token: $GITHUB_API_TOKEN
-      #     requires:
-      #       - build-staging
-
-      # Remova os comentário abaixo se quiser realizar build 
-      # de de imagem latest e tag quando mergear para master
-
-      # - build: 
-      #     <<: *build-template
-      #     name: build-tag
-      #     image-tag: ${CIRCLE_SHA1:0:7}
-      #     filters:
-      #       branches:
-      #         only: master
-      # - notify-build-status:
-      #     <<: *notify-build-status-template
-      #     name: notify-build-tag
-      #     image-tag: ${CIRCLE_SHA1:0:7}
-      #     requires:
-      #       - build-tag
-
-      # - build: &build-latest
-      #     <<: *build-template
-      #     name: build-latest
-      #     image-tag: latest
-      #     filters:
-      #       branches:
-      #         only: master
-      # - notify-build-status:
-      #     <<: *notify-build-status-template
-      #     name: notify-build-latest
-      #     requires:
-      #       - build-latest
+      - node12x:
+          context: docker-registry-auth
 
   optional-checks:
     jobs:
-      - node11x:
+      - node8x:
           context: docker-registry-auth
