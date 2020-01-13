@@ -41,7 +41,7 @@ describe('when using the native CPU Profiler', () => {
         cpuProfiler.stop('test2', 'random_root_script', 0, () => {
           callbackCalled = true
         })
-        busyWait(1)
+        busyWait(3)
       } catch (err) {
         stopError = err
       }
@@ -55,7 +55,7 @@ describe('when using the native CPU Profiler', () => {
       expect(stopError).to.be.false
     })
 
-    it('should call the callback method in less than 1ms', () => {
+    it('should call the callback method in less than 3ms', () => {
       expect(callbackCalled).to.be.true
     })
   })
