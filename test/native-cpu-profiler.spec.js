@@ -78,10 +78,10 @@ describe('when using the native CPU Profiler', () => {
             data = profilerData
           }
         )
-        busyWait(1)
+        busyWait(3)
       })
 
-      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+      it('should send a new line terminated string containing collected metricts to callback method in less than 3ms', () => {
         expect(typeof data).to.be.equal('string')
         expect(data).to.not.be.empty
         expect(data.charAt(data.length - 1)).to.be.equal('\n')
@@ -116,7 +116,7 @@ describe('when using the native CPU Profiler', () => {
         busyWait(1)
       })
 
-      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+      it('should send a new line terminated string containing collected metricts to callback method in less than 3ms', () => {
         expect(typeof data).to.be.equal('string')
         expect(data).to.not.be.empty
         expect(data.charAt(data.length - 1)).to.be.equal('\n')
