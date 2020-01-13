@@ -1,15 +1,17 @@
 {
   "env": {
     "commonjs": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "extends": [
     "airbnb",
     "plugin:security/recommended",
     "plugin:you-dont-need-lodash-underscore/compatible",
-    "prettier"
+    "prettier",
+    "plugin:chai-friendly/recommended"
   ],
-  "plugins": ["prettier", "security", "no-unsafe-regex"],
+  "plugins": ["prettier", "security", "no-unsafe-regex", "chai-friendly"],
   "rules": {
     "prettier/prettier": ["error"],
     "no-unsafe-regex/no-unsafe-regex": "error",
