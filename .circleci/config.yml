@@ -10,9 +10,9 @@ commands:
       - run: "npm t && npm run test:coverage-report"
 
 jobs:
-  node6x: &template
+  node8x: &template
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - checkout
       - run:
@@ -25,11 +25,6 @@ jobs:
       - run:
           when: on_success
           command: bash <(curl -s https://codecov.io/bash)
-
-  node8x:
-      <<: *template
-      docker:
-        - image: circleci/node:8
 
   node10x:
       <<: *template
@@ -116,8 +111,6 @@ workflows:
   version: 2
   required-checks:
     jobs:
-      - node6x:
-          context: docker-registry-auth
       - node10x:
           context: docker-registry-auth
       - node12x:
