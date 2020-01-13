@@ -27,13 +27,12 @@ class ProfilerWrapper {
 
       return asyncFunc(...args)
         .then(result => {
+          sampler.stop()
           return result
         })
         .catch(err => {
-          throw err
-        })
-        .finally(() => {
           sampler.stop()
+          throw err
         })
     }
   }
