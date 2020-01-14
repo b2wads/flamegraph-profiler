@@ -116,14 +116,14 @@ workflows:
   version: 2
   required-checks:
     jobs:
-      - node6x:
-          context: docker-registry-auth
-      - node10x:
-          context: docker-registry-auth
+      # - node6x:
+      #     context: docker-registry-auth
+      # - node10x:
+      #     context: docker-registry-auth
       - node12x:
           context: docker-registry-auth
 
-  optional-checks:
-    jobs:
-      - node8x:
-          context: docker-registry-auth
+  # optional-checks:
+  #   jobs:
+  #     - node8x:
+  #         context: docker-registry-auth
