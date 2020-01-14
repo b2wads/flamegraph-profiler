@@ -4,7 +4,6 @@ const sinon = require('sinon')
 const { ProfilerWrapper } = require('..')
 const Sampler = require('../src/sampler')
 
-
 describe('when using the function wrapper', () => {
   context('with profiler disabled', () => {
     let profiler
@@ -25,7 +24,7 @@ describe('when using the function wrapper', () => {
         expect(wrappedFunction).to.be.equal(functionFixture)
       })
     })
-  
+
     context('with asynchronous function', () => {
       const functionFixture = async () => {}
       let wrappedFunction
@@ -46,7 +45,7 @@ describe('when using the function wrapper', () => {
     })
 
     context('with synchronous function returning properly', () => {
-      const functionFixture = sinon.stub().callsFake((a, b) => a+b)
+      const functionFixture = sinon.stub().callsFake((a, b) => a + b)
       const argA = 2
       const argB = 3
 
@@ -86,8 +85,10 @@ describe('when using the function wrapper', () => {
     })
 
     context('with synchronous function throwing errors', () => {
-      const errorFixture = "error"
-      const functionFixture = sinon.stub().callsFake(() => { throw errorFixture })
+      const errorFixture = 'error'
+      const functionFixture = sinon.stub().callsFake(() => {
+        throw errorFixture
+      })
 
       let wrappedFunction
       let thrownError
@@ -129,7 +130,7 @@ describe('when using the function wrapper', () => {
     })
 
     context('with asynchronous returning properly function', () => {
-      const functionFixture = sinon.stub().callsFake(async (a, b) => a+b)
+      const functionFixture = sinon.stub().callsFake(async (a, b) => a + b)
       const argA = 2
       const argB = 3
 
@@ -156,7 +157,9 @@ describe('when using the function wrapper', () => {
       })
 
       it('return of the wrapping function should be the same as the return of the wrapped function', async () => {
-        expect(wrappedFunctionReturn).to.be.equal(await functionFixture(argA, argB))
+        expect(wrappedFunctionReturn).to.be.equal(
+          await functionFixture(argA, argB)
+        )
       })
 
       it('should start the profiler sampler', () => {
@@ -169,8 +172,10 @@ describe('when using the function wrapper', () => {
     })
 
     context('with asynchronous throwing errors', () => {
-      const errorFixture = "error"
-      const functionFixture = sinon.stub().callsFake(async () => { throw errorFixture })
+      const errorFixture = 'error'
+      const functionFixture = sinon.stub().callsFake(async () => {
+        throw errorFixture
+      })
 
       let thrownError
       let wrappedFunction

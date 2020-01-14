@@ -2,11 +2,12 @@ const { expect } = require('chai')
 const cpuProfiler = require('bindings')('native_cpu_profiler')
 const path = require('path')
 
-const busyWait = (timeInMs) => {
-    begin = new Date().getTime()
-    do {
-      elapsedTime = new Date().getTime() - begin
-    } while (elapsedTime < timeInMs)
+const busyWait = timeInMs => {
+  const begin = new Date().getTime()
+  let elapsedTime
+  do {
+    elapsedTime = new Date().getTime() - begin
+  } while (elapsedTime < timeInMs)
 }
 
 describe('when using the native CPU Profiler', () => {
@@ -37,15 +38,10 @@ describe('when using the native CPU Profiler', () => {
       }
 
       try {
-        cpuProfiler.stop(
-          'test2',
-          'random_root_script',
-          0,
-          () => {
-            callbackCalled = true
-          }
-        )
-        busyWait(1)
+        cpuProfiler.stop('test2', 'random_root_script', 0, () => {
+          callbackCalled = true
+        })
+        busyWait(3)
       } catch (err) {
         stopError = err
       }
@@ -59,7 +55,7 @@ describe('when using the native CPU Profiler', () => {
       expect(stopError).to.be.false
     })
 
-    it('should call the callback method in less than 1ms', () => {
+    it('should call the callback method in less than 3ms', () => {
       expect(callbackCalled).to.be.true
     })
   })
@@ -71,24 +67,24 @@ describe('when using the native CPU Profiler', () => {
       const projectRoot = path.normalize(`${__dirname}/..`)
       before(() => {
         cpuProfiler.start('test3')
-        for (let i = 0; i < 100000000; i++) {
-          (() => {})()
+        for (let i = 0; i < 100000000; i += 1) {
+          ;(() => {})()
         }
         cpuProfiler.stop(
           'test3',
           rootScript,
-          projectRoot.length+1,
+          projectRoot.length + 1,
           (err, profilerData) => {
             data = profilerData
           }
         )
-        busyWait(1)
+        busyWait(3)
       })
 
-      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+      it('should send a new line terminated string containing collected metricts to callback method in less than 3ms', () => {
         expect(typeof data).to.be.equal('string')
         expect(data).to.not.be.empty
-        expect(data.charAt(data.length-1)).to.be.equal('\n')
+        expect(data.charAt(data.length - 1)).to.be.equal('\n')
       })
 
       it('should not have a single stack trace which does not begin at the root script', () => {
@@ -106,13 +102,13 @@ describe('when using the native CPU Profiler', () => {
       const projectRoot = path.normalize(`${__dirname}/..`)
       before(() => {
         cpuProfiler.start('test3')
-        for (let i = 0; i < 100000000; i++) {
-          (() => {})()
+        for (let i = 0; i < 100000000; i += 1) {
+          ;(() => {})()
         }
         cpuProfiler.stop(
           'test3',
           rootScript,
-          projectRoot.length+1,
+          projectRoot.length + 1,
           async (err, profilerData) => {
             data = profilerData
           }
@@ -120,10 +116,10 @@ describe('when using the native CPU Profiler', () => {
         busyWait(1)
       })
 
-      it('should send a new line terminated string containing collected metricts to callback method in less than 1ms', () => {
+      it('should send a new line terminated string containing collected metricts to callback method in less than 3ms', () => {
         expect(typeof data).to.be.equal('string')
         expect(data).to.not.be.empty
-        expect(data.charAt(data.length-1)).to.be.equal('\n')
+        expect(data.charAt(data.length - 1)).to.be.equal('\n')
       })
 
       it('should not have a single stack trace which does not begin at the root script', () => {

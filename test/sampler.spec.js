@@ -1,12 +1,11 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const path = require('path')
-
-const Sampler = require('../src/sampler')
 const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
 
-const projectRootLength = path.normalize(`${__dirname}/../..`).length
+const Sampler = require('../src/sampler')
 
+const projectRootLength = path.normalize(`${__dirname}/../..`).length
 
 describe('when using the sampler', () => {
   describe('when starting and stoping the sampler', () => {
@@ -23,9 +22,9 @@ describe('when using the sampler', () => {
         sinon.stub(nativeCpuProfiler, 'start')
         sinon.stub(nativeCpuProfiler, 'stop')
 
-        sampler = new Sampler(config)
+        const sampler = new Sampler(config)
 
-        for (let i = 0; i < numberOfStarts; i++) {
+        for (let i = 0; i < numberOfStarts; i += 1) {
           sampler.start()
           sampler.stop()
         }
@@ -38,23 +37,29 @@ describe('when using the sampler', () => {
 
       it('should start the profiler every time', () => {
         expect(nativeCpuProfiler.start.called).to.be.true
-        expect(nativeCpuProfiler.start.getCalls().length).to.be.equal(numberOfStarts)
+        expect(nativeCpuProfiler.start.getCalls().length).to.be.equal(
+          numberOfStarts
+        )
       })
 
       it('should stop the profiler every time', () => {
         expect(nativeCpuProfiler.stop.called).to.be.true
-        expect(nativeCpuProfiler.stop.getCalls().length).to.be.equal(numberOfStarts)
+        expect(nativeCpuProfiler.stop.getCalls().length).to.be.equal(
+          numberOfStarts
+        )
       })
 
       it('should start native profiler with the correct parameters', () => {
-        expect(nativeCpuProfiler.start.getCall(0).args[0]).to.be.equal(config.description)
+        expect(nativeCpuProfiler.start.getCall(0).args[0]).to.be.equal(
+          config.description
+        )
       })
 
       it('should stop the profiler with the correct parametrs', () => {
         expect(nativeCpuProfiler.stop.getCall(0).args).to.deep.equal([
           config.description,
           config.targetedScript,
-          projectRootLength+1,
+          projectRootLength + 1,
           config.callback
         ])
       })
@@ -73,9 +78,9 @@ describe('when using the sampler', () => {
         sinon.stub(nativeCpuProfiler, 'start')
         sinon.stub(nativeCpuProfiler, 'stop')
 
-        sampler = new Sampler(config)
+        const sampler = new Sampler(config)
 
-        for (let i = 0; i < config.samplingInterval*numberOfStarts; i++) {
+        for (let i = 0; i < config.samplingInterval * numberOfStarts; i += 1) {
           sampler.start()
           sampler.stop()
         }
@@ -88,12 +93,16 @@ describe('when using the sampler', () => {
 
       it('should start the profiler 3 times', () => {
         expect(nativeCpuProfiler.start.called).to.be.true
-        expect(nativeCpuProfiler.start.getCalls().length).to.be.equal(numberOfStarts)
+        expect(nativeCpuProfiler.start.getCalls().length).to.be.equal(
+          numberOfStarts
+        )
       })
 
       it('should stop the profiler 3 times', () => {
         expect(nativeCpuProfiler.stop.called).to.be.true
-        expect(nativeCpuProfiler.stop.getCalls().length).to.be.equal(numberOfStarts)
+        expect(nativeCpuProfiler.stop.getCalls().length).to.be.equal(
+          numberOfStarts
+        )
       })
     })
   })

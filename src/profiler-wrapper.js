@@ -2,7 +2,6 @@ const nativeCpuProfiler = require('bindings')('native_cpu_profiler')
 
 const Sampler = require('./sampler')
 
-
 const defaultGlobalConfig = {
   description: 'profile-sample',
   targetScript: 'app.js',
@@ -12,7 +11,6 @@ const defaultGlobalConfig = {
 let globalConfig = defaultGlobalConfig
 
 class ProfilerWrapper {
-
   constructor(config) {
     this.config = {
       ...globalConfig,
@@ -20,46 +18,42 @@ class ProfilerWrapper {
     }
   }
 
-  wrapAsync (asyncFunc) {
+  wrapAsync(asyncFunc) {
     if (this.config.disabled) return asyncFunc
-  
+
     const sampler = new Sampler(this.config)
     return async (...args) => {
       sampler.start()
 
       return asyncFunc(...args)
         .then(result => {
+          sampler.stop()
           return result
         })
         .catch(err => {
-          throw err
-        })
-        .finally(() => {
           sampler.stop()
+          throw err
         })
     }
   }
-  
-  wrap (func) {
+
+  wrap(func) {
     if (this.config.disabled) return func
-  
+
     const sampler = new Sampler(this.config)
     return (...args) => {
       sampler.start()
       try {
         return func(...args)
-      } catch (err) {
-        throw err
       } finally {
         sampler.stop()
       }
     }
   }
-  
 }
 
 const changeGlobalConfig = config => {
-  globalConfig = { 
+  globalConfig = {
     ...globalConfig,
     ...config
   }
@@ -68,7 +62,7 @@ const changeGlobalConfig = config => {
 }
 
 const resetGlobalConfig = () => {
-  globalConfig = initialConfig
+  globalConfig = defaultGlobalConfig
 }
 
 module.exports = {

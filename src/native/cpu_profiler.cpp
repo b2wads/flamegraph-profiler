@@ -7,6 +7,7 @@ using namespace v8;
 using namespace Nan;
 using namespace std;
 
+// TODO needs to dispose this profiler
 CpuProfiler* v8_profiler = CpuProfiler::New(Isolate::GetCurrent());
 
 void flamegraph_profiler::Initialize (Local<Object> exports) {
