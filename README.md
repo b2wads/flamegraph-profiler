@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/b2wads/flamegraph-profiler/tree/master.svg?style=svg)](https://circleci.com/gh/b2wads/flamegraph-profiler/tree/master)
+[![codecov](https://codecov.io/gh/b2wads/flamegraph-profiler/branch/master/graph/badge.svg)](https://codecov.io/gh/b2wads/flamegraph-profiler)
+
 # FlameGraph Profiler
 
 This library provides a simple interface for continuous profiling of CPU hotspots in Node.js applications. The profiling is done using the V8 Profiler and collected metrics are made available in folded [FlameGraph](https://github.com/brendangregg/FlameGraph) format.
